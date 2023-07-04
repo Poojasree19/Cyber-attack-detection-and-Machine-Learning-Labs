@@ -1,0 +1,184 @@
++*In[1]:*+
+[source, ipython3]
+----
+import numpy as np
+import pandas as p
+----
+
+
++*In[7]:*+
+[source, ipython3]
+----
+def linear_regression(x,y):
+ x=np.array(x)
+ y=np.array(y)
+ n=len(x)
+ x_bar=x.mean()
+ y_bar=y.mean()
+
+ sum_1=0
+ sum_2=0
+ for i in range(n):
+    sum_1+=(x[i]*(y[i]-y_bar))
+ for i in range(n):
+     sum_2+=(x[i]*(x[i]-x_bar))
+ beta_1=sum_1/sum_2
+ beta_0=y_bar-(beta_1*x_bar)
+ print("Coefficients of regression: ",beta_0,beta_1)
+    
+ y_predicted=np.zeros(n)
+ for i in range(n):
+     y_predicted[i]=beta_0+(beta_1*x[i])
+
+ SSE,SSR,SST,MAE,RMSE=0,0,0,0,0
+ for i in range(n):
+     SSE+=(y[i]-y_predicted[i])**2
+     SSR+=(y_predicted[i]-y_bar)**2
+     SST+=(y[i]-y_bar)**2
+     MAE+=abs(y[i]-y_predicted[i])
+     RMSE+=(y[i]-y_predicted[i])**2
+ R_square=SSR/SST
+ MAE=MAE/n
+ RMSE=RMSE/n
+
+ print("Sum Of Square Error: ",(SSE))
+ print("Sum Of Square Regression: ",(SSR))
+ print("R_square Error: ",(R_square))
+ print("Mean Absolute Error: ",(MAE))
+ print("Root mean square error: ",(RMSE))
+
+x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+y = [1, 3, 2, 5, 7, 8, 8, 9, 10, 12]
+linear_regression(x,y)
+
+----
+
+
++*Out[7]:*+
+----
+Coefficients of regression:  1.2363636363636363 1.1696969696969697
+Sum Of Square Error:  5.624242424242421
+Sum Of Square Regression:  112.87575757575756
+R_square Error:  0.9525380386139879
+Mean Absolute Error:  0.6169696969696968
+Root mean square error:  0.5624242424242422
+----
+
+
++*In[9]:*+
+[source, ipython3]
+----
+def multilinear_regression(x1,x2,y):
+ x1=np.array(x1)
+ x2=np.array(x2)
+ y=np.array(y)
+ y_bar=y.mean()
+ x1_bar=x1.mean()
+ n=len(y)
+ 
+ X=np.array([np.ones(n),x1,x2])
+ X=X.T
+ Y=y.T
+ 
+ dot_X_XT=np.dot(X.T,X)
+ inverse_X_XT=np.linalg.inv(dot_X_XT)
+ XT_Y=np.dot(X.T,Y)
+ beta=np.dot(inverse_X_XT,XT_Y)
+ 
+ print("Coefficients of regression: ",end=" ")
+ for i in beta:
+     print(i,end=" ")
+ print()
+ 
+ y_predicted=(np.dot(X,beta))
+ SSE=sum((y-y_predicted)**2)
+ SSR=sum((y_predicted-y_bar)**2)
+ SST=sum((y-y_bar)**2)
+ R_square=SSR/SST
+ MAE=sum(abs(y-y_predicted))/n
+ RMSE=sum((y-y_predicted)**2)/n
+ 
+ print("Sum Of Square Error: ",(SSE))
+ print("Sum Of Square Regression: ",(SSR))
+ print("R_square Error: ",(R_square))
+ print("Mean Absolute Error: ",(MAE))
+ print("Root mean square error: ",(RMSE))
+ 
+x1=[1,2,3,4,5,6,7,8,9]
+x2=[2,1,4,3,2,5,4,3,6]
+y=[2,1,3,2,4,3,2,5,3]
+multilinear_regression(x1,x2,y)
+----
+
+
++*Out[9]:*+
+----
+Coefficients of regression:  1.8269230769230784 0.3397435897435903 -0.22435897435897534 
+Sum Of Square Error:  7.282051282051282
+Sum Of Square Regression:  4.273504273504283
+R_square Error:  0.36982248520710137
+Mean Absolute Error:  0.809116809116809
+Root mean square error:  0.809116809116809
+----
+
+
++*In[10]:*+
+[source, ipython3]
+----
+def polynomial_regression(x,y):
+ x=np.array(x)
+ y=np.array(y)
+    
+ n=len(x)
+ x_bar=x.mean()
+ y_bar=y.mean()
+
+ X=np.array([np.ones(n),x,x**2])
+ X=X.T
+ Y=y.T
+    
+ dot_X_XT=np.dot(X.T,X)
+ inverse_X_XT=np.linalg.inv(dot_X_XT)
+ XT_Y=np.dot(X.T,Y)
+ beta=np.dot(inverse_X_XT,XT_Y)
+ print("Coefficients of regression: ",end=" ")
+ for i in beta:
+     print(i,end=" ")
+ print()
+
+ y_predicted=np.dot(X,beta)
+ SSE=sum((y-y_predicted)**2)
+ SSR=sum((y_predicted-y_bar)**2)
+ SST=sum((y-y_bar)**2)
+ R_square=SSR/SST
+ MAE=sum(abs(y-y_predicted))/n
+ RMSE=sum((y-y_predicted)**2)/n
+    
+ print("Sum Of Square Error: ",(SSE))
+ print("Sum Of Square Regression: ",(SSR))
+ print("R_square Error: ",(R_square))
+ print("Mean Absolute Error: ",(MAE))
+ print("Root mean square error: ",(RMSE))
+ 
+x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+y = [1, 3, 2, 5, 7, 8, 8, 9, 10,12]
+polynomial_regression(x,y)
+----
+
+
++*Out[10]:*+
+----
+Coefficients of regression:  0.9636363636363825 1.374242424242425 -0.022727272727273373 
+Sum Of Square Error:  5.351515151515152
+Sum Of Square Regression:  113.14848484848389
+R_square Error:  0.954839534586362
+Mean Absolute Error:  0.5969696969696919
+Root mean square error:  0.5351515151515152
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+
+----
